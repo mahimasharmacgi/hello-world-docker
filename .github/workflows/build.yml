@@ -11,38 +11,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Find Visual Studio installation path
-        id: vswhere
-        shell: cmd
-        run: |
-          REM Use vswhere.exe to find latest VS install path with VC tools
-          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do (
-            echo VSINSTALLDIR=%%i
-            setx VSINSTALLDIR %%i
-          )
+      - uses: actions/checkout@v3
 
       - name: Build with MSVC
         shell: cmd
         run: |
-          REM Use environment variable set by previous step
-          set VSINSTALLDIR=%VSINSTALLDIR%
+          REM Find VS installation path with VC tools
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%%i
 
           echo Using VSINSTALLDIR=%VSINSTALLDIR%
 
           REM Call vcvarsall.bat to setup environment
           call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvarsall.bat" x64
 
-          REM Confirm cl.exe is available
+          REM Verify cl.exe path
           where cl
 
           REM Compile main.cpp
           cl /EHsc main.cpp /Fe:main.exe
 
-      - name: Upload executable
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: cpp-windows-executable
           path: hellodocker.exe
