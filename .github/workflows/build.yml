@@ -15,11 +15,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build executable
-        # Use MSVC's cl.exe compiler via Developer Command Prompt
-        shell: powershell
+        shell: cmd
         run: |
-          # Setup MSVC environment (should be pre-installed on windows-latest runner)
-          cmd /c "vcvarsall.bat x64 && cl /EHsc main.cpp /Fe:main.exe"
+          call "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat"
+          cl /EHsc main.cpp /Fe:main.exe
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
