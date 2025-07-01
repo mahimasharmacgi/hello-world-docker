@@ -1,4 +1,4 @@
-name: Build C++ Project
+name: Build C++ on Windows
 
 on:
   push:
@@ -7,18 +7,22 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: sudo apt-get install g++
+      - name: Build executable
+        # Use MSVC's cl.exe compiler via Developer Command Prompt
+        shell: powershell
+        run: |
+          # Setup MSVC environment (should be pre-installed on windows-latest runner)
+          cmd /c "vcvarsall.bat x64 && cl /EHsc main.cpp /Fe:main.exe"
 
-    - name: Build C++ code
-      run: g++ main.cpp -o main
-
-    - name: Run the program
-      run: ./main
+      - name: Upload executable
+        uses: actions/upload-artifact@v3
+        with:
+          name: cpp-windows-executable
+          path: hellodocker.exe
