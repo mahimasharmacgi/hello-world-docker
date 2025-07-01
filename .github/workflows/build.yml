@@ -11,19 +11,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup MSBuild environment
-        uses: microsoft/setup-msbuild@v1.1
-
-      - name: Build executable
+      - name: Build executable using MSVC
         shell: cmd
         run: |
-          call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" x64
+          REM Call the Visual Studio environment setup script via vswhere.exe to find VS install path
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%%i
+          call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvarsall.bat" x64
           cl /EHsc main.cpp /Fe:main.exe
 
-      - name: Upload executable
+      - name: Upload executable artifact
         uses: actions/upload-artifact@v4
         with:
           name: cpp-windows-executable
