@@ -17,9 +17,13 @@ jobs:
       - name: Build executable using MSVC
         shell: cmd
         run: |
-          REM Call the Visual Studio environment setup script via vswhere.exe to find VS install path
+          REM Find latest VS installation path
           for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%%i
+
+          REM Initialize build environment for x64 in this shell
           call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvarsall.bat" x64
+
+          REM Now compile your source code
           cl /EHsc main.cpp /Fe:main.exe
 
       - name: Upload executable artifact
