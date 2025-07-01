@@ -3,24 +3,30 @@ name: Build C++ on Windows
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # Step 1: Checkout your code
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Build executable using MSVC
+      # Step 2: Setup MSBuild (includes MSVC compiler environment)
+      - name: Setup MSBuild environment
+        uses: microsoft/setup-msbuild@v1.1
+
+      # Step 3: Compile your C++ code using cl.exe
+      - name: Build with cl.exe
         shell: cmd
-        run: |
-          set "PF86=C:\Progra~2"
-          for /f "usebackq tokens=*" %%i in (`"%PF86%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%%i
-          echo VSINSTALLDIR is %VSINSTALLDIR%
-          call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvarsall.bat" x64
-          cl /EHsc main.cpp /Fe:main.exe
+        run: cl /EHsc main.cpp /Fe:main.exe
 
-      - uses: actions/upload-artifact@v4
+      # Step 4: Upload the built executable as an artifact
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
         with:
           name: cpp-windows-executable
           path: helldocker.exe
