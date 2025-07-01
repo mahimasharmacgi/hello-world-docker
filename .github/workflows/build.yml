@@ -15,7 +15,7 @@ jobs:
         shell: cmd
         run: |
           for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do (
-            call "%%i\VC\Auxiliary\Build\vcvarsall.bat" x64 && cl /EHsc main.cpp /Fe:main.exe
+            call "%%i\VC\Auxiliary\Build\vcvarsall.bat" x64 && cl /EHsc main.cpp /Fe:hellodocker.exe
           )
       
       - uses: actions/upload-artifact@v4
