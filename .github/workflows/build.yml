@@ -11,23 +11,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Build executable using MSVC
         shell: cmd
         run: |
-          REM Find latest VS installation path
-          for /f "usebackq tokens=*" %i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%i
-
-          REM Initialize build environment for x64 in this shell
+          set "PF86=%ProgramFiles(x86)%"
+          for /f "usebackq tokens=*" %i in (`"%PF86%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set VSINSTALLDIR=%i
+          echo VSINSTALLDIR is %VSINSTALLDIR%
           call "%VSINSTALLDIR%\VC\Auxiliary\Build\vcvarsall.bat" x64
-
-          REM Now compile your source code
           cl /EHsc main.cpp /Fe:main.exe
 
-      - name: Upload executable artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: cpp-windows-executable
           path: hellodocker.exe
