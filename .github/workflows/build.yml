@@ -7,16 +7,21 @@ on:
     branches: [ main ]
 
 jobs:
-  build-windows:
+  build:
     runs-on: windows-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Setup MSBuild environment
+        uses: microsoft/setup-msbuild@v1.1
+
       - name: Build executable
-        shell: vs2022
-        run: cl /EHsc main.cpp /Fe:main.exe
+        shell: cmd
+        run: |
+          call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" x64
+          cl /EHsc main.cpp /Fe:main.exe
 
       - name: Upload executable
         uses: actions/upload-artifact@v4
