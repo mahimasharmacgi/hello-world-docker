@@ -1,4 +1,4 @@
-# First stage: build debug executable
+# Build stage: compile with debug symbols
 FROM ubuntu:22.04 AS builder
 
 RUN apt-get update && apt-get install -y build-essential gdb
@@ -9,12 +9,11 @@ COPY main.cpp .
 
 RUN g++ -g main.cpp -o hellodocker-debug
 
-# Second stage: runtime image
+# Final stage: minimal runtime image with debug binary
 FROM ubuntu:22.04
 
 WORKDIR /app
 
-# Copy the debug executable from builder stage
 COPY --from=builder /app/hellodocker-debug .
 
 CMD ["./hellodocker-debug"]
