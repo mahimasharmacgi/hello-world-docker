@@ -1,4 +1,4 @@
-name: Build C++ on Windows
+name: Build C++ on Linux
 
 on:
   push:
@@ -6,25 +6,16 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build with MSVC in one command
-        shell: cmd
-        run: |
-          for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do (
-            call "%%i\VC\Auxiliary\Build\vcvarsall.bat" x64 && cl /EHsc main.cpp /Fe:hellodocker.exe
-          )
-      
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cpp-windows-executable
-          path: hellodocker.exe
+      - name: Build C++ executable
+        run: g++ main.cpp -o hellodocker
 
-      - name: List files before Docker build
-        run: dir
+      - name: List files
+        run: ls -l
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
