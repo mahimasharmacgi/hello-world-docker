@@ -1,11 +1,14 @@
-# Use Windows base image compatible with GitHub runner
-FROM mcr.microsoft.com/windows/servercore:ltsc2022
+# Use a lightweight Linux base image
+FROM ubuntu:22.04
+
+# Install dependencies (if needed)
+RUN apt-get update && apt-get install -y libstdc++6
+
+# Copy executable to container
+COPY hellodocker /app/hellodocker
 
 # Set working directory
-WORKDIR C:/hellodocker
+WORKDIR /app
 
-# Copy built executable into container
-COPY hellodocker.exe .
-
-# Run the executable by default
-ENTRYPOINT ["C:\\hellodocker\\hellodocker.exe"]
+# Run the app by default
+CMD ["./hellodocker"]
