@@ -1,6 +1,27 @@
-version: "3.8"
+version: '3.9'
+
 services:
-  app:
-    image: ghcr.io/mahimasharmacgi/hello-world-docker:latest
+  hello-cpp-app:
+    build: .
     container_name: hello-cpp-app
-    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=testdb
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: testdb
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:
