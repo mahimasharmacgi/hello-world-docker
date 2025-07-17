@@ -5,7 +5,8 @@ services:
     build: .
     container_name: hello-cpp-app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DB_HOST=db
       - DB_USER=root
@@ -22,6 +23,23 @@ services:
       - "3306:3306"
     volumes:
       - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 5
+
+  test:
+    build: .
+    container_name: cpp-test
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["./db_test"]
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_NAME=testdb
 
 volumes:
   db-data:

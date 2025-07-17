@@ -1,25 +1,24 @@
-# Stage 1: Build the executable
-FROM ubuntu:22.04 AS builder
+FROM gcc:13
 
-# Install build tools (g++)
-RUN apt-get update && apt-get install -y build-essential
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    cmake \
+    libmysqlclient-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
+# Set working directory
 WORKDIR /app
 
-# Copy source code to container
-COPY main.cpp .
+# Copy all files into container
+COPY . .
 
-# Compile your C++ code to an executable named hellodocker
-RUN g++ main.cpp -o hellodocker
+# Download Catch2 header-only version using curl
+RUN mkdir -p extern && \
+    curl -L -o extern/catch.hpp https://raw.githubusercontent.com/catchorg/Catch2/devel/single_include/catch2/catch.hpp
 
+# Build the project
+RUN cmake . && make
 
-# Stage 2: Create smaller final image only with executable
-FROM ubuntu:22.04
-
-WORKDIR /app
-
-# Copy the compiled executable from builder stage
-COPY --from=builder /app/hellodocker .
-
-# Run the executable when container starts
-CMD ["./hellodocker"]
+# Default command: run main app
+CMD ["./main"]
