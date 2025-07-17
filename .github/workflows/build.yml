@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build C++ executable
-        run: g++ main.cpp -o hellodocker
+        run:  g++ main.cpp -o hellodocker -lmysqlclient
 
       - name: List files
         run: ls -l
