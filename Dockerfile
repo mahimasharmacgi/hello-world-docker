@@ -1,6 +1,6 @@
 FROM gcc:13
 
-RUN apt-get update && apt-get install -y libmysqlclient-dev curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libmariadb-dev libmariadb-dev-compat curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
