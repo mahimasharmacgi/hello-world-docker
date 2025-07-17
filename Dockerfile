@@ -10,4 +10,5 @@ RUN mkdir -p extern && curl -L -o extern/catch.hpp https://raw.githubusercontent
 
 RUN g++ main.cpp -o hellodocker -lmysqlclient
 
+
 CMD ["./hellodocker"]
