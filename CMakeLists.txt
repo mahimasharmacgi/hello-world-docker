@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(HelloDockerCpp)
+project(Hello-World-Docker)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -8,6 +8,6 @@ add_executable(main main.cpp)
 target_link_libraries(main mysqlclient)
 
 # Test App
-add_executable(tests/db_test.cpp)
+add_executable(db_test tests/db_test.cpp)
 target_include_directories(db_test PRIVATE extern)
 target_link_libraries(db_test mysqlclient pthread)
