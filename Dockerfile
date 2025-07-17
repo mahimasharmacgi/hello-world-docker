@@ -16,8 +16,8 @@ COPY . .
 RUN mkdir -p extern && \
     curl -L -o extern/catch.hpp https://raw.githubusercontent.com/catchorg/Catch2/devel/single_include/catch2/catch.hpp
 
-# Compile the application using g++ and link to mysqlclient
-RUN g++ main.cpp -o hellodocker -lmysqlclient
+# Compile the application using mysql_config to get correct flags
+RUN g++ main.cpp -o hellodocker $(mysql_config --cflags --libs)
 
 # Default command: run the compiled app
 CMD ["./hellodocker"]
